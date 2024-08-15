@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {UsuarioService} from "../../shared/services/usuario.service";
 import Swal from "sweetalert2";
 import {MensagemSweetService} from "../../shared/services/mensagem-sweet.service";
+import { UsuarioRestService } from 'src/app/shared/services/usuario-rest.service';
 
 @Component({
   selector: 'app-cadastro-usuario',
@@ -16,22 +17,29 @@ export class ManterUsuarioComponent {
   modoEdicao = false;
 
   constructor(private roteador: Router, private rotaAtual: ActivatedRoute,
-              private usuarioService: UsuarioService, private mensagemService: MensagemSweetService) {
+              private usuarioService: UsuarioService, private mensagemService: MensagemSweetService, private usuarioRestService: UsuarioRestService) {
     const idParaEdicao = rotaAtual.snapshot.paramMap.get('id');
     if (idParaEdicao) {
       this.modoEdicao = true;
-      const usuarioAEditar = usuarioService.listar().find(usuario => usuario.id == idParaEdicao);
-      if (usuarioAEditar) {
-        this.usuario = usuarioAEditar;
-      }
+      usuarioRestService.buscarID(idParaEdicao).subscribe(
+        {
+         next: usuario => this.usuario = usuario}
+        );
+
+      // if (usuarioAEditar) {
+      //   this.usuario = usuarioAEditar;
+      // }
     }
   }
 
   inserir() {
     if (!this.modoEdicao) {
       try {
-        this.usuarioService.inserir(this.usuario);
-        this.roteador.navigate(['listagem-usuarios']);
+        this.usuarioRestService.inserir(this.usuario).subscribe(
+          {
+            next: () => this.roteador.navigate(['listagem-usuarios']),
+          }
+        );
         this.mensagemService.sucesso('Usuário cadastrado com sucesso.');
       } catch (e: any){
         this.mensagemService.erro(e.message);

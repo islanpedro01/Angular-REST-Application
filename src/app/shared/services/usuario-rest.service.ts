@@ -14,4 +14,13 @@ export class UsuarioRestService {
   listar(): Observable<Usuario[]> {
     return this.httpClient.get<Usuario[]>(this.URL_USUARIOS);
   }
+
+  buscarID(id:string): Observable<Usuario> {
+    return this.httpClient.get<Usuario>(this.URL_USUARIOS+'/'+id);
+  }
+
+  inserir(usuario: Usuario): Observable<Usuario> {
+    return this.httpClient.post<Usuario>(this.URL_USUARIOS, usuario);
+  }
+
 }
