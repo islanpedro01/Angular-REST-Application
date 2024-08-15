@@ -4,6 +4,7 @@ import {Usuario} from "../../shared/model/usuario";
 import {Router} from "@angular/router";
 import {UsuarioService} from "../../shared/services/usuario.service";
 import {UsuarioRestService} from "../../shared/services/usuario-rest.service";
+import { MensagemSweetService } from 'src/app/shared/services/mensagem-sweet.service';
 
 @Component({
   selector: 'app-listagem-usuario',
@@ -13,8 +14,8 @@ import {UsuarioRestService} from "../../shared/services/usuario-rest.service";
 export class ListagemUsuarioComponent {
 
   usuarios: Usuario[] = [];
-  constructor(private roteador: Router, private usuarioService: UsuarioRestService) {
-    usuarioService.listar().subscribe(
+  constructor(private roteador: Router, private usuarioRestService: UsuarioRestService, private mensagemService: MensagemSweetService) {
+    usuarioRestService.listar().subscribe(
         {
           next: usuariosRetornados => this.usuarios = usuariosRetornados
         }
@@ -22,9 +23,12 @@ export class ListagemUsuarioComponent {
   }
 
   remover(usuarioARemover: Usuario) {
-    // this.usuarioService.remover(usuarioARemover);
-    // this.usuarios = this.usuarios.filter(usuario => usuario.id != usuarioARemover.id);
-    // this.roteador.navigate(['listagem-usuarios']);
+    this.usuarioRestService.remover(usuarioARemover.id).subscribe(
+      {
+        next: usuario => this.roteador.navigate(['listagem-usuarios'])
+      }
+    );
+    this.mensagemService.sucesso('Usuário removido com sucesso!')
   }
 
   editar(usuarioAEditar: Usuario) {

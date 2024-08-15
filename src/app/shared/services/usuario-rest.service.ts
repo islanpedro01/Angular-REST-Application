@@ -23,4 +23,8 @@ export class UsuarioRestService {
     return this.httpClient.post<Usuario>(this.URL_USUARIOS, usuario);
   }
 
+  remover(id:string): Observable<Usuario> {
+    return this.httpClient.delete<Usuario>(this.URL_USUARIOS+'/'+id);
+  }
+
 }
