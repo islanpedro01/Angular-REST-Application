@@ -1,9 +1,19 @@
 <mat-card class="card-insercao">
     <mat-card-content>
+        @if (modoEdicao){    
         <mat-form-field>
+           
             <mat-label>Id</mat-label>
-            <input matInput [(ngModel)]="usuario.id">
+            <input disabled="true" matInput [(ngModel)]="usuario.id">
         </mat-form-field>
+    }
+@else {
+    <mat-form-field >
+           
+        <mat-label>Id</mat-label>
+        <input matInput [(ngModel)]="usuario.id">
+    </mat-form-field>
+}
 
         <mat-form-field>
             <mat-label>Nome</mat-label>
@@ -16,7 +26,15 @@
     </mat-card-content>
 </mat-card>
 
+@if (modoEdicao) {
+    <button mat-icon-button (click)="inserir()">
+    <mat-icon>save</mat-icon>
+</button>
+
+}
+@else {
 <button mat-icon-button (click)="inserir()">
     <mat-icon>add</mat-icon>
 </button>
+}
 

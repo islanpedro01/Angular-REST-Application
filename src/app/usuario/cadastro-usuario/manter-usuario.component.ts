@@ -35,10 +35,10 @@ export class ManterUsuarioComponent {
     
   }
 
-  inserir() {
+  async inserir() {
     if (!this.modoEdicao) {
       try {
-        this.usuarioRestService.inserir(this.usuario).subscribe(
+         (await this.usuarioRestService.inserir(this.usuario)).subscribe(
           {
             next: usuario => this.roteador.navigate(['listagem-usuarios']),
           }
@@ -50,12 +50,16 @@ export class ManterUsuarioComponent {
     
     }
     else {
-      this.usuarioRestService.editar(this.usuario).subscribe(
+      try {
+      (await this.usuarioRestService.editar(this.usuario)).subscribe(
     { 
       next: () => this.roteador.navigate(['listagem-usuarios'])
     }
     ); 
-      }
+    } catch (e: any){
+      this.mensagemService.erro(e.message);
+    }
     
   }
+}
 }

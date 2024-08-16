@@ -24,10 +24,13 @@ export class ListagemUsuarioComponent {
   remover(usuarioARemover: Usuario) {
     this.usuarioRestService.remover(usuarioARemover.id).subscribe(
       {
-        next: usuario => this.roteador.navigate(['listagem-usuarios'])
+        next: usuario =>  this.usuarios = this.usuarios.filter((u) => u.id !== usuarioARemover.id),   
       }
-    );
-    this.mensagemService.sucesso('Usuário removido com sucesso!')
+      
+    )
+      this.mensagemService.sucesso('Usuário removido com sucesso!')
+   
+
   }
 
   editar(usuarioAEditar: Usuario) {

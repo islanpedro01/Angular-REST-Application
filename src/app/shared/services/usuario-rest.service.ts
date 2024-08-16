@@ -20,10 +20,13 @@ export class UsuarioRestService {
   }
 
   editar(usuario: Usuario): Observable<Usuario> {
+    this.validarMaiorIdade(usuario);
     return this.httpClient.put<Usuario>(this.URL_USUARIOS+'/'+usuario.id,usuario);
   }
 
-  inserir(usuario: Usuario): Observable<Usuario> {
+  async inserir(usuario: Usuario): Promise<Observable<Usuario>> {
+    this.validarMaiorIdade(usuario);
+    await this.validarID(usuario);
     return this.httpClient.post<Usuario>(this.URL_USUARIOS, usuario);
   }
 
@@ -31,23 +34,24 @@ export class UsuarioRestService {
     return this.httpClient.delete<Usuario>(this.URL_USUARIOS+'/'+id);
   }
 
-  private validarMaiorIdade(usuario: Usuario) {
+  private validarMaiorIdade(usuario: Usuario):void{
     if (usuario.idade < 18) {
-        throw new Error('Usuário nao pode ser menor!');
+        throw new Error('Usuário não pode ser menor de idade!');
     }
 }
 
-private validarIDExistente(usuario: Usuario) {
-    this.buscarID(usuario.id).subscribe(
-      {
-        next: usuarioBuscado => usuario = usuarioBuscado
-      }
-
-    );
-    if (usuario) {
-        throw new Error('Usuário já cadastrado com ID!');
-    }
-    return usuario;
-
+private validarID(usuario: Usuario) {
+  
+  return new Promise<void>((resolve, reject) => {
+    this.buscarID(usuario.id).subscribe({
+      next: usuarioBuscado => {
+        if (usuarioBuscado) {
+          reject(new Error('Já existe outro usuário com este ID!'));
+        } else {
+          resolve();
+        }
+      },
+    });
+  });
 }
 }
