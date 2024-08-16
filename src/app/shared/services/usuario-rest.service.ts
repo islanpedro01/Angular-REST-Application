@@ -19,6 +19,10 @@ export class UsuarioRestService {
     return this.httpClient.get<Usuario>(this.URL_USUARIOS+'/'+id);
   }
 
+  editar(usuario: Usuario): Observable<Usuario> {
+    return this.httpClient.put<Usuario>(this.URL_USUARIOS+'/'+usuario.id,usuario);
+  }
+
   inserir(usuario: Usuario): Observable<Usuario> {
     return this.httpClient.post<Usuario>(this.URL_USUARIOS, usuario);
   }
@@ -27,4 +31,23 @@ export class UsuarioRestService {
     return this.httpClient.delete<Usuario>(this.URL_USUARIOS+'/'+id);
   }
 
+  private validarMaiorIdade(usuario: Usuario) {
+    if (usuario.idade < 18) {
+        throw new Error('Usuário nao pode ser menor!');
+    }
+}
+
+private validarIDExistente(usuario: Usuario) {
+    this.buscarID(usuario.id).subscribe(
+      {
+        next: usuarioBuscado => usuario = usuarioBuscado
+      }
+
+    );
+    if (usuario) {
+        throw new Error('Usuário já cadastrado com ID!');
+    }
+    return usuario;
+
+}
 }
